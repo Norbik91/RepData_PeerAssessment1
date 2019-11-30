@@ -22,10 +22,9 @@ library(ggplot2)
 dfSum <- df %>% group_by(date) %>% 
       summarize(TotSteps = sum(steps, na.rm = TRUE)) 
 
-ggplot(dfSum, aes(x = date, y= TotSteps)) +
-  geom_bar(stat = "identity", width = 1) +
-  scale_x_date(date_labels = "%D") +
-  labs(x = "Date", y = "Count", title = "Total Number of Steps Taken Each Day")
+ggplot(dfSum, aes(x = TotSteps)) +
+  geom_histogram(bins = 20) +
+  labs(x = "Total Steps", y = "Frequency", title = "Total Number of Steps Taken Each Day")
 
 MeanTotSteps <- mean(dfSum$TotSteps)
 MedianTotSteps <- median(dfSum$TotSteps)
@@ -83,10 +82,9 @@ dfImputed <- select(dfImputed, -MedSteps)
 dfSum <- dfImputed %>% group_by(date) %>% 
       summarize(TotSteps = sum(steps)) 
 
-ggplot(dfSum, aes(x = date, y= TotSteps)) +
-      geom_bar(stat = "identity", width = 1) +
-      scale_x_date(date_labels = "%D") +
-      labs(x = "Date", y = "Count", title = "Total Number of Steps Taken Each Day")
+ggplot(dfSum, aes(x = TotSteps)) +
+  geom_histogram(bins = 20) +
+  labs(x = "Total Steps", y = "Frequency", title = "Total Number of Steps Taken Each Day")
 
 MeanTotStepsImputed <- mean(dfSum$TotSteps)
 MedianTotStepsImputed <- median(dfSum$TotSteps)

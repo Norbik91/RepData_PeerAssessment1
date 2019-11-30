@@ -44,10 +44,9 @@ library(ggplot2)
 dfSum <- df %>% group_by(date) %>% 
       summarize(TotSteps = sum(steps, na.rm = TRUE)) 
 
-ggplot(dfSum, aes(x = date, y= TotSteps)) +
-  geom_bar(stat = "identity", width = 1) +
-  scale_x_date(date_labels = "%D") +
-  labs(x = "Date", y = "Count", title = "Total Number of Steps Taken Each Day")
+ggplot(dfSum, aes(x = TotSteps)) +
+  geom_histogram(bins = 20) +
+  labs(x = "Total Steps", y = "Frequency", title = "Total Number of Steps Taken Each Day")
 ```
 
 ![](PA1_template_files/figure-html/unnamed-chunk-2-1.png)<!-- -->
@@ -120,10 +119,9 @@ dfImputed <- select(dfImputed, -MedSteps)
 dfSum <- dfImputed %>% group_by(date) %>% 
       summarize(TotSteps = sum(steps)) 
 
-ggplot(dfSum, aes(x = date, y= TotSteps)) +
-      geom_bar(stat = "identity", width = 1) +
-      scale_x_date(date_labels = "%D") +
-      labs(x = "Date", y = "Count", title = "Total Number of Steps Taken Each Day")
+ggplot(dfSum, aes(x = TotSteps)) +
+  geom_histogram(bins = 20) +
+  labs(x = "Total Steps", y = "Frequency", title = "Total Number of Steps Taken Each Day")
 ```
 
 ![](PA1_template_files/figure-html/unnamed-chunk-4-1.png)<!-- -->
