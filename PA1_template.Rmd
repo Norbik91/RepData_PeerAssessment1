@@ -17,17 +17,19 @@ df$date <- as.Date(df$date)
   
 ## What is mean total number of steps taken per day?
 ```{r, echo=TRUE}
+options(scipen = 1, digits = 2)
+
 library(dplyr)
 library(ggplot2)
 dfSum <- df %>% group_by(date) %>% 
-      summarize(TotSteps = sum(steps, na.rm = TRUE)) 
+      summarize(TotSteps = sum(steps)) 
 
 ggplot(dfSum, aes(x = TotSteps)) +
   geom_histogram(bins = 20) +
   labs(x = "Total Steps", y = "Frequency", title = "Total Number of Steps Taken Each Day")
 
-MeanTotSteps <- mean(dfSum$TotSteps)
-MedianTotSteps <- median(dfSum$TotSteps)
+MeanTotSteps <- mean(dfSum$TotSteps, na.rm = TRUE)
+MedianTotSteps <- median(dfSum$TotSteps, na.rm = TRUE)
 
 ```
 The mean of the total number of steps taken per day: `r MeanTotSteps`  
@@ -66,7 +68,7 @@ TotNA <- sum(is.na(df$steps))
 ## Missing values filled with median values of corresponding 5-minutes interval
 ## Calculate median values for each interval
 dfMed <- df %>% group_by(interval) %>% 
-      summarize(MedSteps = median(steps, na.rm = TRUE))
+      summarize(MedSteps = median(steps))
 
 ## Add median values to data frame
 dfImputed <- left_join(df, dfMed)

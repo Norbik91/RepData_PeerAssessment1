@@ -19,6 +19,8 @@ df$date <- as.Date(df$date)
 ## What is mean total number of steps taken per day?
 
 ```r
+options(scipen = 1, digits = 2)
+
 library(dplyr)
 ```
 
@@ -42,21 +44,25 @@ library(dplyr)
 ```r
 library(ggplot2)
 dfSum <- df %>% group_by(date) %>% 
-      summarize(TotSteps = sum(steps, na.rm = TRUE)) 
+      summarize(TotSteps = sum(steps)) 
 
 ggplot(dfSum, aes(x = TotSteps)) +
   geom_histogram(bins = 20) +
   labs(x = "Total Steps", y = "Frequency", title = "Total Number of Steps Taken Each Day")
 ```
 
+```
+## Warning: Removed 8 rows containing non-finite values (stat_bin).
+```
+
 ![](PA1_template_files/figure-html/unnamed-chunk-2-1.png)<!-- -->
 
 ```r
-MeanTotSteps <- mean(dfSum$TotSteps)
-MedianTotSteps <- median(dfSum$TotSteps)
+MeanTotSteps <- mean(dfSum$TotSteps, na.rm = TRUE)
+MedianTotSteps <- median(dfSum$TotSteps, na.rm = TRUE)
 ```
-The mean of the total number of steps taken per day: 9354.2295082  
-The median of the total number of steps taken per day: 10395
+The mean of the total number of steps taken per day: 10766.19  
+The median of the total number of steps taken per day: 10765
   
   
   
@@ -97,7 +103,7 @@ TotNA <- sum(is.na(df$steps))
 ## Missing values filled with median values of corresponding 5-minutes interval
 ## Calculate median values for each interval
 dfMed <- df %>% group_by(interval) %>% 
-      summarize(MedSteps = median(steps, na.rm = TRUE))
+      summarize(MedSteps = median(steps))
 
 ## Add median values to data frame
 dfImputed <- left_join(df, dfMed)
@@ -124,6 +130,10 @@ ggplot(dfSum, aes(x = TotSteps)) +
   labs(x = "Total Steps", y = "Frequency", title = "Total Number of Steps Taken Each Day")
 ```
 
+```
+## Warning: Removed 8 rows containing non-finite values (stat_bin).
+```
+
 ![](PA1_template_files/figure-html/unnamed-chunk-4-1.png)<!-- -->
 
 ```r
@@ -135,8 +145,8 @@ MedianImpact <- MedianTotStepsImputed - MedianTotSteps
 ```
 Total number of missing values in the dataset: 2304  
 Impact of imputing missing data on the estimates of the total daily number of steps:  
-- Mean Value: 149.6393443  
-- Median Value: 0  
+- Mean Value: NA  
+- Median Value: NA  
   
     
 ## Are there differences in activity patterns between weekdays and weekends?
@@ -164,6 +174,10 @@ ggplot(dfSum1, aes(x = time, y= MeanSteps)) +
       labs(x = "Time Interval", y = "Average Steps", 
            title = "Number of Steps Taken, Averaged Across All Days") +
       scale_x_datetime(breaks = date_breaks("4 hour"), labels=date_format("%H:%M"))
+```
+
+```
+## Warning: Removed 576 rows containing missing values (geom_path).
 ```
 
 ![](PA1_template_files/figure-html/facet-1.png)<!-- -->
