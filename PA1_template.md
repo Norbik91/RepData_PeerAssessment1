@@ -100,12 +100,12 @@ MaxStepInt <- dfSum$interval[dfSum$MeanSteps == max(dfSum$MeanSteps)]
 ```r
 TotNA <- sum(is.na(df$steps))
 
-## Missing values filled with median values of corresponding 5-minutes interval
-## Calculate median values for each interval
+## Missing values filled with mean values of corresponding 5-minutes interval
+## Calculate mean values for each interval
 dfMed <- df %>% group_by(interval) %>% 
-      summarize(MedSteps = median(steps))
+      summarize(MedSteps = mean(steps, na.rm = TRUE))
 
-## Add median values to data frame
+## Add mean values to data frame
 dfImputed <- left_join(df, dfMed)
 ```
 
@@ -117,21 +117,17 @@ dfImputed <- left_join(df, dfMed)
 ## find rows with missing values
 na.id <- which(is.na(df$steps))
 
-## Replace missing values by median values
+## Replace missing values by mean values
 dfImputed[na.id, "steps"] <- dfImputed[na.id, "MedSteps"]
 dfImputed <- select(dfImputed, -MedSteps)
 
-## Make a histogram and calculate mean and median values
+## Make a histogram and calculate mean and mean values
 dfSum <- dfImputed %>% group_by(date) %>% 
       summarize(TotSteps = sum(steps)) 
 
 ggplot(dfSum, aes(x = TotSteps)) +
   geom_histogram(bins = 20) +
   labs(x = "Total Steps", y = "Frequency", title = "Total Number of Steps Taken Each Day")
-```
-
-```
-## Warning: Removed 8 rows containing non-finite values (stat_bin).
 ```
 
 ![](PA1_template_files/figure-html/unnamed-chunk-4-1.png)<!-- -->
@@ -145,8 +141,8 @@ MedianImpact <- MedianTotStepsImputed - MedianTotSteps
 ```
 Total number of missing values in the dataset: 2304  
 Impact of imputing missing data on the estimates of the total daily number of steps:  
-- Mean Value: NA  
-- Median Value: NA  
+- Mean Value: 0  
+- Median Value: 1.19  
   
     
 ## Are there differences in activity patterns between weekdays and weekends?
@@ -162,22 +158,18 @@ Sys.setlocale("LC_ALL","English")
 ```r
 dfImputed$Week <- factor(ifelse(weekdays(dfImputed$date) %in% c("Saturday", "Sunday"), "weekend", "weekday"))
 
-dfSum1 <- dfImputed %>% group_by(Week, interval) %>% 
+dfSum <- dfImputed %>% group_by(Week, interval) %>% 
       summarize(MeanSteps = mean(steps))
 
-dfSum1$time <- sprintf("%04d", dfSum1$interval)
-dfSum1$time <- as.POSIXct(strptime(dfSum1$time, format = "%H%M"), tz="GMT")
+dfSum$time <- sprintf("%04d", dfSum$interval)
+dfSum$time <- as.POSIXct(strptime(dfSum$time, format = "%H%M"), tz="GMT")
 
-ggplot(dfSum1, aes(x = time, y= MeanSteps)) +
+ggplot(dfSum, aes(x = time, y= MeanSteps)) +
       geom_line() +
       facet_grid(Week ~ .) +
       labs(x = "Time Interval", y = "Average Steps", 
            title = "Number of Steps Taken, Averaged Across All Days") +
       scale_x_datetime(breaks = date_breaks("4 hour"), labels=date_format("%H:%M"))
-```
-
-```
-## Warning: Removed 576 rows containing missing values (geom_path).
 ```
 
 ![](PA1_template_files/figure-html/facet-1.png)<!-- -->
